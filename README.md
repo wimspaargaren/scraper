@@ -6,6 +6,7 @@ Simple scraping tool for scraping and downloading articles from ACM, IEEE, Sprin
 
 1. Go 1.13 (for mac simply run `brew install go`)
 2. Postgresql 11.4 or higher (for mac simply run `brew install postgresql`)
+3. A database :)
 
 # Scrape articles
 

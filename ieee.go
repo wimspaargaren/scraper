@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/wimspaargaren/literature-scraper/models"
+	"github.com/wimspaargaren/scraper/models"
 )
 
 //GetCSVReader from filepath

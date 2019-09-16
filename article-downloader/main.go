@@ -5,7 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/wimspaargaren/literature-scraper/models"
+	"github.com/wimspaargaren/scraper/models"
 )
 
 var (

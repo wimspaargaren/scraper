@@ -4,18 +4,17 @@
 //
 // Command:
 // $ goagen
-// --design=github.com/wimspaargaren/literature-scraper/design
-// --out=$(GOPATH)/src/github.com/wimspaargaren/literature-scraper
 // --version=v1.4.1
 
 package models
 
 import (
 	"context"
+	"time"
+
 	"github.com/goadesign/goa"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
-	"time"
 )
 
 // Request done for P4 service
@@ -71,7 +70,6 @@ type ArticleStorage interface {
 	Add(ctx context.Context, article *Article) error
 	Update(ctx context.Context, article *Article) error
 	Delete(ctx context.Context, id uuid.UUID) error
-
 }
 
 // TableName overrides the table name settings in Gorm to force a specific table name

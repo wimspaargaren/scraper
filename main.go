@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/wimspaargaren/literature-scraper/models"
+	"github.com/wimspaargaren/scraper/models"
 )
 
 const (

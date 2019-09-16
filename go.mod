@@ -1,4 +1,4 @@
-module github.com/wimspaargaren/literature-scraper
+module github.com/wimspaargaren/scraper
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0

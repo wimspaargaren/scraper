@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/wimspaargaren/literature-scraper/models"
+	"github.com/wimspaargaren/scraper/models"
 
 	"github.com/PuerkitoBio/goquery"
 )

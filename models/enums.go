@@ -4,8 +4,6 @@
 //
 // Command:
 // $ goagen
-// --design=github.com/wimspaargaren/literature-scraper/design
-// --out=$(GOPATH)/src/github.com/wimspaargaren/literature-scraper
 // --version=v1.4.1
 
 package models

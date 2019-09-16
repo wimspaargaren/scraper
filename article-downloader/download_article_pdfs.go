@@ -11,7 +11,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	log "github.com/sirupsen/logrus"
 	"github.com/skratchdot/open-golang/open"
-	"github.com/wimspaargaren/literature-scraper/models"
+	"github.com/wimspaargaren/scraper/models"
 )
 
 func downloadArticlePDFs() {

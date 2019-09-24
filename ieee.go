@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -27,7 +28,7 @@ func GetCSVReader(filePath string, seperator, comment rune, fieldsPerRecord int)
 
 //ProcessIEEEExport processIEEE export csv
 func ProcessIEEEExport() error {
-	csvReader, err := GetCSVReader("ieee-xplore-export.csv", ',', '#', 31)
+	csvReader, err := GetCSVReader("ieee-xplore-export.csv", ',', '#', 30)
 	if err != nil {
 		log.Errorf("Error reading csv, error: %s", err.Error())
 		return err
@@ -38,9 +39,13 @@ func ProcessIEEEExport() error {
 		if err == io.EOF {
 			break
 		}
+		if len(record) < 6 {
+			log.Errorf("not enough records: %d, for row: %d", len(record), counter)
+			return fmt.Errorf("not enough records")
+		}
 		year, err := strconv.Atoi(record[5])
 		if err != nil {
-			log.Errorf("Error parsing year, error: %s", err.Error())
+			log.Errorf("Error parsing year, error: %s on row: %d", err.Error(), counter)
 			return err
 		}
 

@@ -21,6 +21,7 @@ const (
 	PlatformACM           Platform = 2
 	PlatformSpringer      Platform = 3
 	PlatformIEEE          Platform = 4
+	PlatformWebOfScience  Platform = 5
 )
 
 var platformStrings = map[int64]string{
@@ -28,6 +29,7 @@ var platformStrings = map[int64]string{
 	2: "ACM",
 	3: "Springer",
 	4: "IEEE",
+	5: "WebOfScience",
 }
 
 var platformStringMap = map[string]Platform{
@@ -35,6 +37,7 @@ var platformStringMap = map[string]Platform{
 	"ACM":           PlatformACM,
 	"Springer":      PlatformSpringer,
 	"IEEE":          PlatformIEEE,
+	"WebOfScience":  PlatformWebOfScience,
 }
 
 func (u *Platform) Scan(value interface{}) error {

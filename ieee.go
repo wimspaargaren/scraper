@@ -51,7 +51,7 @@ func ProcessIEEEExport() error {
 
 		err = articleDB.Add(ctx, &models.Article{
 			Year:         year,
-			Description:  record[19],
+			Description:  record[10],
 			Title:        record[0],
 			URL:          record[15],
 			Platform:     models.PlatformIEEE,

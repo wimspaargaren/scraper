@@ -1,6 +1,9 @@
 package main
 
-import "unicode/utf8"
+import (
+	"strings"
+	"unicode/utf8"
+)
 
 func fixString(s string) string {
 	if !utf8.ValidString(s) {
@@ -16,5 +19,7 @@ func fixString(s string) string {
 		}
 		s = string(v)
 	}
+	s = strings.Trim(s, "")
+	s = strings.ReplaceAll(s, "\n", "")
 	return s
 }

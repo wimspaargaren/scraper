@@ -33,8 +33,9 @@ func main() {
 	log.Infof("Started scraping")
 	start := time.Now()
 	// Enable everything you need
-	// go FindDOIs()
+	// FindDOIs()
 	// processDOILinks()
+	// ProcessWebOfScienceExport()
 	// ProcessIEEEExport()
 	// doSpringerScrape()
 	// doScholarScrape()
@@ -68,16 +69,12 @@ func doScholarScrape() {
 
 }
 
+// https://link.springer.com/search?query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#
+// https://link.springer.com/search?query=%22financial+AND+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#
 func doSpringerScrape() {
 	linksToVisit := []string{
-		`/search/page/1?dc.title=%22decision%22+%22software+engineering%22&date-facet-mode=between&showAll=true&query=%22software+development%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+project+management%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+design%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+architecture%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+maintenance%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22requirements+engineering%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+organization%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+process+modeling%22`,
+		`/search?query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#`,
+		`/search?query=%22financial+AND+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#`,
 	}
 	for _, search := range linksToVisit {
 		log.Infof("Processing: %s", search)
@@ -85,3 +82,5 @@ func doSpringerScrape() {
 
 	}
 }
+
+// https://link.springer.com/search?query=fintech+AND+%28%22financial+OR+technology%22+OR+AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22

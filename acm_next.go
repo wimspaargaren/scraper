@@ -38,19 +38,22 @@ func processACMENextResponse(reader io.Reader, callDepth, number int, query stri
 		log.Errorf("Could not create document from read, error: %s", err.Error())
 		return
 	}
+	counter := 0
 	doc.Find(".issue-item--search").Each(func(i int, s *goquery.Selection) {
-		log.Infof("HI")
 		mainElement := s.Find(".issue-item__title").Find("a")
 		link, ok := mainElement.Attr("href")
 		if !ok {
 			log.Error("Could not find article link")
 		}
-		link = acmeNext + "/" + link
+		doi := ""
+		if strings.HasPrefix(link, "/doi/abs/") {
+			doi = link[9:len(link)]
+		}
+		link = acmeNext + link
 		title := mainElement.Text()
 
 		description := s.Find(".issue-item__abstract").Text()
 		description = fixString(description)
-
 		yeartext := s.Find(".issue-item__detail").Text()
 		year := getYear(yeartext)
 
@@ -64,6 +67,9 @@ func processACMENextResponse(reader io.Reader, callDepth, number int, query stri
 		if err != nil {
 			log.Errorf("Error getting cited by, error: %s", err.Error())
 		}
+		if description == "" {
+			counter++
+		}
 		err = articleDB.Add(ctx, &models.Article{
 			Year:         year,
 			Description:  description,
@@ -72,6 +78,7 @@ func processACMENextResponse(reader io.Reader, callDepth, number int, query stri
 			Platform:     models.PlatformACM,
 			Query:        query,
 			ResultNumber: number,
+			Doi:          doi,
 			Cited:        citedBy,
 			Metadata:     []byte("{}"),
 		})

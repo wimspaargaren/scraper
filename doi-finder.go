@@ -52,13 +52,22 @@ func processArticle(article *models.Article) error {
 
 	searchErr := errors.New("not found")
 	found := false
+	wordsToContain := strings.Split(article.Title, " ")
 	doc.Find(".item-data").Each(func(i int, s *goquery.Selection) {
 		if !found {
+			text := s.Text()
+			allInText := true
+			for _, word := range wordsToContain {
+				if !strings.Contains(text, word) {
+					log.Warningf("Word not found: %s", word)
+					allInText = false
+				}
+			}
 			val, ok := s.Find("a").Attr("href")
-			if ok {
-				fmt.Println("SET TO:", val)
-				if strings.Contains(val, "doi") {
-					article.Doi = val
+			if ok && allInText {
+				if strings.HasPrefix(val, "https://doi.org/") {
+					doi := val[16:len(val)]
+					article.Doi = doi
 					err := articleDB.Update(ctx, article)
 					if err != nil {
 						log.Errorf("Aaaw, error: %s", err.Error())

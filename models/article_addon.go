@@ -96,3 +96,18 @@ func (m *ArticleDB) ListOnStatus(ctx context.Context, status Status) ([]*Article
 
 	return objs, nil
 }
+
+// ListOnStatus returns an array of Article
+func (m *ArticleDB) ListOnDoi(ctx context.Context, doi string) ([]*Article, error) {
+	defer goa.MeasureSince([]string{"goa", "db", "article", "ListArticles"}, time.Now())
+	doiLowered := strings.ToLower(doi)
+	var objs []*Article
+	err := m.Db.Table(m.TableName()).Where("lower(doi) = ?", doiLowered).
+	Order("url").
+		Find(&objs).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	return objs, nil
+}

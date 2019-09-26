@@ -20,7 +20,6 @@ import (
 // Request done for P4 service
 type Article struct {
 	ID           uuid.UUID `sql:"type:uuid;default:uuid_generate_v4()" gorm:"primary_key"` // primary key
-	CiteURL      string
 	Cited        int
 	Comment      string
 	CreatedAt    time.Time

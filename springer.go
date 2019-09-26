@@ -37,10 +37,17 @@ func processSpringerResponse(response *http.Response, callDepth, number int, que
 		mainElement := s.Find(".title")
 		link, ok := mainElement.Attr("href")
 		if !ok {
-			log.Error("Could not find article link")
+			log.Warningf("Could not find article link")
 		}
 		link = springerLink + link
 		title := mainElement.Text()
+		doi := ""
+		doilink, ok := s.Find(".pdf-link").Attr("doi")
+		if !ok {
+			log.Warningf("Could not find pdf link")
+		} else {
+			doi = doilink
+		}
 
 		description := s.Find(".snippet").Text()
 		description = fixString(description)
@@ -65,6 +72,7 @@ func processSpringerResponse(response *http.Response, callDepth, number int, que
 				Description:  description,
 				Title:        title,
 				URL:          link,
+				Doi:          doi,
 				Platform:     models.PlatformSpringer,
 				Query:        query,
 				ResultNumber: number,

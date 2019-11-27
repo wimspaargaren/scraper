@@ -22,6 +22,7 @@ const (
 	PlatformSpringer      Platform = 3
 	PlatformIEEE          Platform = 4
 	PlatformWebOfScience  Platform = 5
+	PlatformScienceDirect Platform = 6
 )
 
 var platformStrings = map[int64]string{
@@ -176,11 +177,13 @@ func (u ScopeType) AllStrings() map[int64]string { return scopeTypeStrings }
 type Status int64
 
 const (
+	StatusNothing     Status = 0
 	StatusUnprocessed Status = 1
 	StatusNotUseful   Status = 2
 	StatusUseful      Status = 3
 	StatusUnknown     Status = 4
 	StatusDuplicate   Status = 5
+	StatusSnowball    Status = 6
 )
 
 var statusStrings = map[int64]string{

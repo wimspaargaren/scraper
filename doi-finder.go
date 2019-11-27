@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -16,28 +16,33 @@ import (
 
 //FindDOIs finding dois
 func FindDOIs() error {
-	for {
-		articles, err := articleDB.ListNoDOI(ctx)
-		if err != nil {
-			return err
-		}
-		if len(articles) == 0 {
-			log.Info("No articles to process")
-		}
-		for _, article := range articles {
-			log.Infof("Processing article: %s", article.ID.String())
-			err = processArticle(article)
-			if err != nil {
-				log.Errorf("Error processing article: %s, error:%s", article.ID.String(), err.Error())
-			}
-		}
-		log.Infof("Sleep doi finder")
-		time.Sleep(time.Second * 5)
+	rand.Seed(time.Now().UnixNano())
+
+	log.Infof("Finding DOIs")
+	articles, err := articleDB.ListNoDOI(ctx)
+	if err != nil {
+		return err
 	}
+	if len(articles) == 0 {
+		log.Info("No articles to process")
+	}
+	for _, article := range articles {
+		log.Infof("Processing article: %s", article.ID.String())
+		rand2 := rand.Intn(3000)
+		log.Infof("Sleeping for: %s", time.Second+time.Millisecond*time.Duration(rand2))
+		time.Sleep(time.Second + time.Millisecond*time.Duration(rand2))
+		err = processArticle(article)
+		if err != nil {
+			log.Errorf("Error processing article: %s, error:%s", article.ID.String(), err.Error())
+		}
+	}
+	log.Infof("Sleep doi finder")
+	time.Sleep(time.Second * 5)
+	return nil
 }
 
 func processArticle(article *models.Article) error {
-	fmt.Println("Searching:", article.Title)
+	log.Infof("Searching:", article.Title)
 	url := `https://search.crossref.org/?q=` + url.QueryEscape(article.Title)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -65,8 +70,9 @@ func processArticle(article *models.Article) error {
 			}
 			val, ok := s.Find("a").Attr("href")
 			if ok && allInText {
+				doi := val
 				if strings.HasPrefix(val, "https://doi.org/") {
-					doi := val[16:len(val)]
+					doi = val[16:len(val)]
 					article.Doi = doi
 					err := articleDB.Update(ctx, article)
 					if err != nil {

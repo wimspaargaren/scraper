@@ -32,11 +32,15 @@ func init() {
 func main() {
 	log.Infof("Started scraping")
 	start := time.Now()
+	// ProcessScienceDirect()
 	// Enable everything you need
 	// FindDOIs()
 	// processDOILinks()
-	// ProcessWebOfScienceExport()
+	// ProcessWebOfScienceExport("webofscienceexport.html", 0)
+	// ProcessWebOfScienceExport("webofscienceexport2.html", 504)
 	// ProcessIEEEExport()
+	// ProcessACMExport("acm1.csv")
+	// ProcessACMExport("acm2.csv")
 	// doSpringerScrape()
 	// doScholarScrape()
 	// doACMNextScrape()
@@ -62,7 +66,7 @@ func doACMNextScrape() {
 
 //Missing: information systems
 func doScholarScrape() {
-	scholarScraper(`/scholar?start=980&q=(("fintech"+OR+"financial+technology")+AND+("AI"+OR+"artificial+intelligence"+OR+"ML"+OR+"machine+learning"+OR+"deep+learning"))&hl=en&as_sdt=0,5`,
+	scholarScraper(`/scholar?q=%28%28"fintech"+OR+"financial+technology"%29+AND+%28"AI"+OR+"artificial+intelligence"+OR+"ML"+OR+"machine+learning"+OR+"deep+learning"%29%29&hl=en&as_sdt=0%2C5&as_ylo=2016&as_yhi=2016`,
 		0,
 		0,
 		`("fintech" OR "financial technology") AND ("AI" OR "artificial intelligence" OR "ML" OR "machine learning"OR "deep learning"))`)
@@ -73,8 +77,12 @@ func doScholarScrape() {
 // https://link.springer.com/search?query=%22financial+AND+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#
 func doSpringerScrape() {
 	linksToVisit := []string{
-		`/search?query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#`,
-		`/search?query=%22financial+AND+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#`,
+		// `/search?date-facet-mode=between&showAll=true&query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22Article%22`,
+		`/search?date-facet-mode=between&showAll=true&query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22ConferencePaper%22`,
+		`/search?date-facet-mode=between&showAll=true&query=%22financial+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22Article%22`,
+		`/search?date-facet-mode=between&showAll=true&query=%22financial+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22ConferencePaper%22`,
+		`/search?dc.title=%22banking%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true&facet-content-type=%22Article%22`,
+		`/search?dc.title=%22banking%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true&facet-content-type=%22ConferencePaper%22`,
 	}
 	for _, search := range linksToVisit {
 		log.Infof("Processing: %s", search)

@@ -60,7 +60,7 @@ func processACMResponse(response *http.Response, callDepth, number int, query st
 		}
 		err = articleDB.Add(ctx, &models.Article{
 			Year:         year,
-			Description:  description,
+			Abstract:  description,
 			Title:        title,
 			URL:          link,
 			Platform:     models.PlatformACM,

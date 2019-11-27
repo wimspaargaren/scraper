@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/wimspaargaren/scraper/models"
@@ -49,17 +50,22 @@ func ProcessIEEEExport() error {
 			return err
 		}
 
-		err = articleDB.Add(ctx, &models.Article{
+		article := &models.Article{
 			Year:         year,
-			Description:  record[10],
+			Abstract:  record[10],
 			Title:        record[0],
+			Authors:      record[1],
 			URL:          record[15],
 			Platform:     models.PlatformIEEE,
-			Query:        `("Document Title":decision* AND ( "Document Title":"software engineering" OR "Document Title":"software development"))`,
+			Query:        `(("All Metadata":"financial technology" OR "All Metadata":"banking" OR "All Metadata":"fintech") AND ( "All Metadata":"AI" OR "All Metadata":"artificial intelligence" OR "All Metadata":"ML" OR "All Metadata":"machine learning" OR "All Metadata":"deep learning"))`,
 			ResultNumber: counter,
 			Doi:          record[13],
 			Metadata:     []byte("{}"),
+		}
+		article.AddKeywords(models.Keywords{
+			List: strings.Split(record[16], ";"),
 		})
+		err = articleDB.Add(ctx, article)
 		if err != nil {
 			log.Errorf("Error adding article: %s", err.Error())
 		} else {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"strconv"
@@ -22,7 +21,7 @@ func acmNextScraper(queryURL string, callDepth, number int, query string) {
 	}
 
 	for _, f := range files {
-		fmt.Println(f.Name())
+		log.Infof(f.Name())
 		dat, err := ioutil.ReadFile("acmnextpages/" + f.Name())
 		if err != nil {
 			log.Errorf("error reading file: %s", err)
@@ -72,7 +71,7 @@ func processACMENextResponse(reader io.Reader, callDepth, number int, query stri
 		}
 		err = articleDB.Add(ctx, &models.Article{
 			Year:         year,
-			Description:  description,
+			Abstract:     description,
 			Title:        title,
 			URL:          link,
 			Platform:     models.PlatformACM,
@@ -81,6 +80,7 @@ func processACMENextResponse(reader io.Reader, callDepth, number int, query stri
 			Doi:          doi,
 			Cited:        citedBy,
 			Metadata:     []byte("{}"),
+			Keywords:     []byte("{}"),
 		})
 
 		if err != nil {
@@ -92,10 +92,10 @@ func processACMENextResponse(reader io.Reader, callDepth, number int, query stri
 }
 
 func getYear(text string) int {
-	fmt.Println("Text", text)
+	log.Infof("Text: %s", text)
 	for i := 1980; i < 2021; i++ {
 		if strings.Contains(text, strconv.Itoa(i)) {
-			fmt.Println("FOUDN", i)
+			log.Infof("FOUND: %d", i)
 			return i
 		}
 	}

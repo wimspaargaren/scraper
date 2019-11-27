@@ -24,10 +24,15 @@ type Article struct {
 	Comment      string
 	CreatedAt    time.Time
 	DeletedAt    *time.Time
-	Description  string
+	Abstract     string
 	Doi          string
+	Lang         string
+	Authors      string
+	Journal      string
+	Publisher    string
 	GotPdf       bool
 	Metadata     []byte   `sql:"type:jsonb"`
+	Keywords     []byte   `sql:"type:jsonb"`
 	Platform     Platform `sql:"type:smallint"` // enum Platform
 	Processed    Status   `sql:"type:smallint"` // enum Status
 	Query        string

@@ -67,7 +67,7 @@ func processScholarResponse(response *http.Response, callDepth, number int, quer
 		log.Infof("Adding article number: %d", number)
 		err := articleDB.Add(ctx, &models.Article{
 			Year:         year,
-			Description:  description,
+			Abstract:  description,
 			Title:        title,
 			URL:          link,
 			Platform:     models.PlatformGoogleScholar,
@@ -75,6 +75,7 @@ func processScholarResponse(response *http.Response, callDepth, number int, quer
 			ResultNumber: number,
 			Cited:        citedBy,
 			Metadata:     []byte("{}"),
+			Keywords:     []byte("{}"),
 		})
 		if err != nil {
 			log.Errorf("Error adding article: %s", err.Error())

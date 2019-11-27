@@ -29,7 +29,7 @@ func init() {
 }
 
 func main() {
-	articles, err := articleDB.List(context.Background())
+	articles, err := articleDB.ListOnStatus(context.Background(), models.StatusUseful)
 	if err != nil {
 		panic(err)
 	}

@@ -3,9 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io/ioutil"
 	"strconv"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	log "github.com/sirupsen/logrus"
@@ -13,8 +13,8 @@ import (
 )
 
 // ProcessWebOfScienceExport save web of science export to the database
-func ProcessWebOfScienceExport() {
-	dat, err := ioutil.ReadFile("webofscienceexport.html")
+func ProcessWebOfScienceExport(fileName string, counter int) {
+	dat, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Errorf("error reading file: %s", err)
 	}
@@ -25,7 +25,6 @@ func ProcessWebOfScienceExport() {
 		return
 	}
 
-	counter := 0
 	doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
 		mapTest := make(map[string]string)
 
@@ -44,14 +43,15 @@ func ProcessWebOfScienceExport() {
 		if len(mapTest) > 6 {
 			article := models.Article{
 				Metadata:     []byte("{}"),
+				Keywords:     []byte("{}"),
 				Platform:     models.PlatformWebOfScience,
 				ResultNumber: counter,
-				Query:        `("fintech" OR "financial technology") AND ("AI" OR "artificial intelligence" OR "ML" OR "machine learning"OR "deep learning")`,
+				Query:        `("fintech" OR "banking" OR "financial technology") AND ("AI" OR "artificial intelligence" OR "ML" OR "machine learning"OR "deep learning")`,
 			}
 			for key, val := range mapTest {
 				switch key {
 				case "AB ":
-					article.Description = val
+					article.Abstract = val
 				case "PY ":
 					year, err := strconv.Atoi(val)
 					if err != nil {
@@ -71,6 +71,17 @@ func ProcessWebOfScienceExport() {
 				case "DI ":
 					log.Infof("DOI: %s", val)
 					article.Doi = val
+				case "LA ":
+					article.Lang = val
+				case "DE ":
+					log.Infof("KEywords: %s", val)
+					article.AddKeywords(models.Keywords{
+						List: strings.Split(val, ";"),
+					})
+				case "AF ":
+					article.Authors = strings.Replace(val, "<br>", "", -1)
+				case "SO ":
+					article.Journal = val
 				}
 			}
 			err := articleDB.Add(context.Background(), &article)
@@ -78,9 +89,9 @@ func ProcessWebOfScienceExport() {
 				log.Errorf("error adding article: %s", err)
 			}
 			counter++
-			fmt.Println("length", len(mapTest))
+			log.Infof("length: %d", len(mapTest))
 
 		}
 	})
-	fmt.Println("Articles added: ", counter)
+	log.Infof("Articles added: %d", counter)
 }

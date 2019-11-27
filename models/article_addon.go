@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 	"time"
 
@@ -28,7 +29,7 @@ func (m *ArticleDB) ListNoDOI(ctx context.Context) ([]*Article, error) {
 	defer goa.MeasureSince([]string{"goa", "db", "article", "ListNoDOI"}, time.Now())
 
 	var objs []*Article
-	err := m.Db.Table(m.TableName()).Where("doi = '' OR doi IS NULL").Find(&objs).Error
+	err := m.Db.Table(m.TableName()).Where("processed = 1 and (doi = '' OR doi IS NULL)").Find(&objs).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -103,11 +104,33 @@ func (m *ArticleDB) ListOnDoi(ctx context.Context, doi string) ([]*Article, erro
 	doiLowered := strings.ToLower(doi)
 	var objs []*Article
 	err := m.Db.Table(m.TableName()).Where("lower(doi) = ?", doiLowered).
-	Order("url").
+		Order("url").
 		Find(&objs).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 
 	return objs, nil
+}
+
+type Keywords struct {
+	List []string `json:"list"`
+}
+
+// AddKeywords add keywords to an article
+func (a *Article) AddKeywords(keywords Keywords) error {
+	b, err := json.Marshal(keywords)
+	if err != nil {
+		return err
+	}
+	a.Keywords = b
+	return nil
+
+}
+
+// AddKeywords add keywords to an article
+func (a *Article) GetKeywords() (Keywords, error) {
+	var res Keywords
+	err := json.Unmarshal(a.Keywords, &res)
+	return res, err
 }

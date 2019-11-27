@@ -1,6 +1,8 @@
 # Scraper tool
 
-Simple scraping tool for scraping and downloading articles from ACM, IEEE, Springer and Google Scholar.
+Simple scraping/processing tool for gathering information about articles from ACM, ScienceDirect, WebOfScience, IEEE, Springer and Google Scholar.
+
+Please note, this repo does not provide a general interface for scraping neither does it provide exemplary GO code. This is repo is developed during a previous mapping study which can be used for another one by some small adjustment.
 
 # Prerequisites
 

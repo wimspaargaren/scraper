@@ -13,6 +13,7 @@ import (
 const (
 	scholarLink  = "https://scholar.google.nl"
 	acmLink      = "https://dl.acm.org"
+	acmeNext     = "https://dlnext.acm.org"
 	springerLink = "https://link.springer.com"
 )
 
@@ -31,12 +32,18 @@ func init() {
 func main() {
 	log.Infof("Started scraping")
 	start := time.Now()
+	// ProcessScienceDirect()
 	// Enable everything you need
-	// go FindDOIs()
+	// FindDOIs()
 	// processDOILinks()
+	// ProcessWebOfScienceExport("webofscienceexport.html", 0)
+	// ProcessWebOfScienceExport("webofscienceexport2.html", 504)
 	// ProcessIEEEExport()
+	// ProcessACMExport("acm1.csv")
+	// ProcessACMExport("acm2.csv")
 	// doSpringerScrape()
 	// doScholarScrape()
+	// doACMNextScrape()
 	// doACMScraper()
 	log.Infof("Done scraping in %s", time.Now().Sub(start))
 }
@@ -49,36 +56,33 @@ func doACMScraper() {
 		`acmdlTitle%3A%28"decision+*"+AND+%28"software+development"+"software process modeling"+"software organization"+"requirements engineering"+"software maintenance"+"information systems"+"software architecture"+"software design"+"software project management"+"software+engineering"%29%`)
 }
 
-//Missing: information systems
-func doScholarScrape() {
-	// https: //scholar.google.nl/scholar?q=allintitle:+decision+%22software+development%22+OR+%22software%20organization%22+OR+%22requirements%20engineering%22+OR+%22software%20maintenance%22+OR+%22software%20architecture%22+OR+%22software%20design%22+OR+%22software%20project%20management%22+OR+%22software+engineering%22&hl=en&as_sdt=0,5
-	scholarScraper("/scholar?q=allintitle:+decision+%22software+development%22+OR+%22software%20organization%22+OR+%22requirements%20engineering%22+OR+%22software%20maintenance%22+OR+%22software%20architecture%22+OR+%22software%20design%22+OR+%22software%20project%20management%22+OR+%22software+engineering%22&hl=en&as_sdt=0,5",
+// /results.cfm?query=acmdlTitle%3A%28"decision+*"+AND+%28"software+development"+"software process modeling"+"software organization"+"requirements engineering"+"software maintenance"+"information systems"+"software architecture"+"software design"+"software project management"+"software+engineering"%29%29&Go.x=40&Go.y=9
+func doACMNextScrape() {
+	acmNextScraper(`/action/doSearch?AllField=%28"fintech"+OR+"financial+technology"%29+AND+%28"AI"+OR+"artificial+intelligence"+OR+"ML"+OR+"machine+learning"OR+"deep+learning"%29&expand=all&startPage=`,
 		0,
 		0,
-		`allintitle: decision "software development" OR "software organization" OR "requirements engineering" OR "software maintenance" OR "software architecture" OR "software design" OR "software project management" OR "software engineering"`)
-
-	// https://scholar.google.nl/scholar?start=550&q=allintitle:+decision+%22software+development%22+OR+%22software+organization%22+OR+%22requirements+engineering%22+OR+%22software+maintenance%22+OR+%22software+architecture%22+OR+%22software+design%22+OR+%22software+project+management%22+OR+%22software+engineering%22&hl=en&as_sdt=0,5
-	// scholarScraper("/scholar?start=550&q=allintitle:+decision+%22software+development%22+OR+%22software+organization%22+OR+%22requirements+engineering%22+OR+%22software+maintenance%22+OR+%22software+architecture%22+OR+%22software+design%22+OR+%22software+project+management%22+OR+%22software+engineering%22&hl=en&as_sdt=0,5",
-	// 	55,
-	// 	550,
-	// 	`allintitle: decision "software development" OR "software organization" OR "requirements engineering" OR "software maintenance" OR "software architecture" OR "software design" OR "software project management" OR "software engineering"`)
-	//https://scholar.google.nl/scholar?hl=en&as_sdt=0%2C5&as_vis=1&q=allintitle%3A+%22software+process+modeling%22+%22decision+*%22&btnG=
-	scholarScraper("/scholar?hl=en&as_sdt=0%2C5&as_vis=1&q=allintitle%3A+%22software+process+modeling%22+%22decision+*%22&btnG=",
-		0,
-		0,
-		`allintitle: "software process modeling" "decision *"`)
+		`("fintech" OR "financial technology") AND ("AI" OR "artificial intelligence" OR "ML" OR "machine learning"OR "deep learning")`)
 }
 
+//Missing: information systems
+func doScholarScrape() {
+	scholarScraper(`/scholar?q=%28%28"fintech"+OR+"financial+technology"%29+AND+%28"AI"+OR+"artificial+intelligence"+OR+"ML"+OR+"machine+learning"+OR+"deep+learning"%29%29&hl=en&as_sdt=0%2C5&as_ylo=2016&as_yhi=2016`,
+		0,
+		0,
+		`("fintech" OR "financial technology") AND ("AI" OR "artificial intelligence" OR "ML" OR "machine learning"OR "deep learning"))`)
+
+}
+
+// https://link.springer.com/search?query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#
+// https://link.springer.com/search?query=%22financial+AND+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true#
 func doSpringerScrape() {
 	linksToVisit := []string{
-		`/search/page/1?dc.title=%22decision%22+%22software+engineering%22&date-facet-mode=between&showAll=true&query=%22software+development%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+project+management%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+design%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+architecture%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+maintenance%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22requirements+engineering%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+organization%22`,
-		`/search/page/1?dc.title=decision+making&date-facet-mode=between&showAll=true&query=%22software+process+modeling%22`,
+		// `/search?date-facet-mode=between&showAll=true&query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22Article%22`,
+		`/search?date-facet-mode=between&showAll=true&query=fintech+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22ConferencePaper%22`,
+		`/search?date-facet-mode=between&showAll=true&query=%22financial+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22Article%22`,
+		`/search?date-facet-mode=between&showAll=true&query=%22financial+technology%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&facet-content-type=%22ConferencePaper%22`,
+		`/search?dc.title=%22banking%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true&facet-content-type=%22Article%22`,
+		`/search?dc.title=%22banking%22+AND+%28AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22machine+OR+learning%22+OR+%22deep+OR+learning%22%29&date-facet-mode=between&showAll=true&facet-content-type=%22ConferencePaper%22`,
 	}
 	for _, search := range linksToVisit {
 		log.Infof("Processing: %s", search)
@@ -86,3 +90,5 @@ func doSpringerScrape() {
 
 	}
 }
+
+// https://link.springer.com/search?query=fintech+AND+%28%22financial+OR+technology%22+OR+AI+OR+%22artificial+OR+intelligence%22+OR+ML+OR+%22

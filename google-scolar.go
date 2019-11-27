@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -15,22 +16,25 @@ import (
 )
 
 func scholarScraper(queryURL string, callDepth, number int, query string) {
-	log.Info("Processing scolar request")
+	log.Infof("Processing scolar request, calldepth: %d, number: %d", callDepth, number)
 	url := scholarLink + queryURL
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Errorf("Error doing scholar request")
 		return
 	}
-	processScholarResponse(resp, callDepth, number, query)
 	defer resp.Body.Close()
+	err = processScholarResponse(resp, callDepth, number, query)
+	if err != nil {
+		log.Errorf("error processing scholar response: %s", err)
+	}
 }
 
-func processScholarResponse(response *http.Response, callDepth, number int, query string) {
+func processScholarResponse(response *http.Response, callDepth, number int, query string) error {
 	doc, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
 		log.Errorf("Could not create document from read, error: %s", err.Error())
-		return
+		return err
 	}
 	doc.Find(".gs_ri").Each(func(i int, s *goquery.Selection) {
 		mainElement := s.Find("h3").Find("a")
@@ -63,7 +67,7 @@ func processScholarResponse(response *http.Response, callDepth, number int, quer
 		log.Infof("Adding article number: %d", number)
 		err := articleDB.Add(ctx, &models.Article{
 			Year:         year,
-			Description:  description,
+			Abstract:  description,
 			Title:        title,
 			URL:          link,
 			Platform:     models.PlatformGoogleScholar,
@@ -71,6 +75,7 @@ func processScholarResponse(response *http.Response, callDepth, number int, quer
 			ResultNumber: number,
 			Cited:        citedBy,
 			Metadata:     []byte("{}"),
+			Keywords:     []byte("{}"),
 		})
 		if err != nil {
 			log.Errorf("Error adding article: %s", err.Error())
@@ -81,13 +86,14 @@ func processScholarResponse(response *http.Response, callDepth, number int, quer
 
 	nextURL, ok := doc.Find(".gs_ico_nav_next").Parent().Attr("href")
 	if ok {
-		rand := rand.Intn(3000)
-		time.Sleep(time.Duration(rand) * time.Millisecond)
+		rand := rand.Intn(5000)
+		time.Sleep(time.Second + time.Duration(rand)*time.Millisecond)
 		scholarScraper(nextURL, callDepth+1, number, query)
 	} else {
 		log.Errorf("Could not find next page link at calldepth: %d, next result to add should be: %d", callDepth, number)
+		return fmt.Errorf("unable to find next page")
 	}
-
+	return nil
 }
 
 func getScholaryear(yearstring string) int {

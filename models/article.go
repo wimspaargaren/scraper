@@ -20,15 +20,19 @@ import (
 // Request done for P4 service
 type Article struct {
 	ID           uuid.UUID `sql:"type:uuid;default:uuid_generate_v4()" gorm:"primary_key"` // primary key
-	CiteURL      string
 	Cited        int
 	Comment      string
 	CreatedAt    time.Time
 	DeletedAt    *time.Time
-	Description  string
+	Abstract     string
 	Doi          string
+	Lang         string
+	Authors      string
+	Journal      string
+	Publisher    string
 	GotPdf       bool
 	Metadata     []byte   `sql:"type:jsonb"`
+	Keywords     []byte   `sql:"type:jsonb"`
 	Platform     Platform `sql:"type:smallint"` // enum Platform
 	Processed    Status   `sql:"type:smallint"` // enum Status
 	Query        string

@@ -37,11 +37,22 @@ func processSpringerResponse(response *http.Response, callDepth, number int, que
 		mainElement := s.Find(".title")
 		link, ok := mainElement.Attr("href")
 		if !ok {
-			log.Error("Could not find article link")
+			log.Warningf("Could not find article link")
 		}
 		link = springerLink + link
 		title := mainElement.Text()
-
+		doi := ""
+		doilink, ok := s.Find(".pdf-link").Attr("doi")
+		if !ok {
+			log.Warningf("Could not find pdf link")
+		} else {
+			doi = doilink
+		}
+		journal := s.Find(".publication-title").Text()
+		authors := ""
+		s.Find(".authors").Find("a").Each(func(i int, s *goquery.Selection) {
+			authors += s.Text() + " "
+		})
 		description := s.Find(".snippet").Text()
 		description = fixString(description)
 		year := 0
@@ -62,13 +73,17 @@ func processSpringerResponse(response *http.Response, callDepth, number int, que
 		if title != "" {
 			err = articleDB.Add(ctx, &models.Article{
 				Year:         year,
-				Description:  description,
+				Abstract:     description,
 				Title:        title,
 				URL:          link,
+				Doi:          doi,
 				Platform:     models.PlatformSpringer,
 				Query:        query,
 				ResultNumber: number,
+				Authors:      authors,
 				Metadata:     []byte("{}"),
+				Keywords:     []byte("{}"),
+				Journal:      journal,
 			})
 			if err != nil {
 				log.Errorf("Error adding article: %s", err.Error())
